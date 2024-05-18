@@ -2,6 +2,8 @@ import express from 'express';
 import productRoutes from './productRoutes.js'; 
 import cartRoutes from './cartRoutes.js';
 
+import handlebars from "express-handlebars";
+
 const app = express();
 const PORT = 8080;
 
