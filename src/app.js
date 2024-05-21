@@ -1,8 +1,13 @@
 import express from 'express';
-import productRoutes from './productRoutes.js'; 
-import cartRoutes from './cartRoutes.js';
+//import cartRoutes from './routes/cartRoutes.js';
+import { Router } from 'express';
+//import handlebars from "express-handlebars";
+import productRoutes from './routes/productsRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
 
-import handlebars from "express-handlebars";
+import { connectMongoDB } from './config/mongoDb.config.js'; // e
+
+connectMongoDB();
 
 const app = express();
 const PORT = 8080;
