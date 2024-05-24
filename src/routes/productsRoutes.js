@@ -1,66 +1,36 @@
-import { Router } from "express";
-import productDao from "../dao/mongoDao/product.dao.js";
+import { productModel } from "../dao/models/product.model.js";
 
-const router = Router();
-router.get("/", async (req, res) => {
-  try {
-    // const { limit } = req.query;
-    const products = await productDao.getAll();
+const getAll = async (query, options) => {
+  const products = await productModel.paginate(query, options);
+  return products;
+};
 
-    res.status(200).json({ status: "success", payload: products });
-  } catch (error) {
-    console.log(error);
-  }
-});
+const getById = async (id) => {
+  const product = await productModel.findById(id);
+  return product;
+};
 
-router.get("/:pid", async (req, res) => {
-  try {
-    const { pid } = req.params; // Todos los parámetros siempre vienen en formato string
+const create = async (data) => {
+  const product = await productModel.create(data);
+  return product;
+};
 
-    const product = await productDao.getById(pid);
-    if (!product) return res.status(404).json({ status: "Error", msg: `Producto con el id ${pid} no encontrado` });
+const update = async (id, data) => {
+  await productModel.findByIdAndUpdate(id, data);
+  const product = await productModel.findById(id);
+  return product;
+};
 
-    res.status(200).json({ status: "success", payload: product });
-  } catch (error) {
-    console.log(error);
-  }
-});
+const deleteOne = async (id) => {
+  const product = await productModel.deleteOne({ _id: id });
+  if (product.deletedCount === 0) return false;
+  return true;
+};
 
-router.post("/", async (req, res) => {
-  try {
-    const product = req.body;
-    const newProduct = await productDao.create(product);
-
-    res.status(201).json({ status: "success", payload: newProduct });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-router.put("/:pid", async (req, res) => {
-  try {
-    const { pid } = req.params;
-    const productData = req.body;
-
-    const updateProduct = await productDao.update(pid, productData);
-    if (!updateProduct) return res.status(404).json({ status: "Error", msg: `Producto con el id ${pid} no encontrado` });
-
-    res.status(200).json({ status: "success", payload: updateProduct });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-router.delete("/:pid", async (req, res) => {
-  try {
-    const { pid } = req.params;
-    const product = await productDao.deleteOne(pid);
-    if (!product) return res.status(404).json({ status: "Error", msg: `Producto con el id ${pid} no encontrado` });
-    
-    res.status(200).json({ status: "success", payload: "Producto eliminado" });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-export default router;
+export default {
+  getAll,
+  getById,
+  create,
+  update,
+  deleteOne,
+};
